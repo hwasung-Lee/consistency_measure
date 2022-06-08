@@ -2,18 +2,17 @@
 
 int measure(int fd, double* angle, double* index)
 {
-	int byte;
 	double data[3];
 	char buf[max_buf];
 	for(int i=0;i<3;i++)
 	{
-		byte=read(fd, &buf, sizeof(buf));
+		read(fd, &buf, sizeof(buf));
 		data[i]=atof(buf);
 		*(angle+i)=atan(data[i]/height);
 		*(index+i) =  sin_45 / sin(angle[i]);
 	}
-
 }
+
 int save_csv(int cnt, double* indexs, double* angles)
 {
 	FILE *csv=fopen("index.csv","w");
@@ -25,4 +24,15 @@ int save_csv(int cnt, double* indexs, double* angles)
 		fprintf(csv,"%d, %.2f, %.2f\n",i, angles[i], indexs[i]);
 	fclose(csv);
 	return 0;
+}
+
+double avg(double* value, int n)
+{
+	double res=0;
+	for(int i = 0;i<n;i++)
+	{
+		res+=*(value+i);
+	}
+	res/=n;
+	return res;
 }

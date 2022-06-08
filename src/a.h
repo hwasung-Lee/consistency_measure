@@ -9,3 +9,4 @@
 
 int measure(int fd, double* angle, double* index);
 int save_csv(int cnt, double* indexs, double* angles);
+double avg(double* value, int n);
