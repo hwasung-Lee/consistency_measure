@@ -16,7 +16,7 @@
 #define laser_on "1"
 #define measure_dis "2"
 
-main(int argc, char **argv)
+int main(int argc, char **argv)
 {
 	int fd=0;
 	int select=0;
@@ -30,7 +30,9 @@ main(int argc, char **argv)
 	double index[4] = {0,};
 	double* indexs;
 	double* angles;
-
+	double dis[4]={0,};
+	double avg_dis;
+	
 	struct termios ttyio;
 
 	indexs=(double*)malloc(sizeof(double)*5);
@@ -104,28 +106,23 @@ select:
 				write(fd,laser_on,1);
 				break;
 			case 3://measure indexs
-			       /*
-				write(fd, measure_dis, 1);
-				measure(fd,&angle,&index);
-				angles[1+cnt]=(angle[0]+angle[1]+angle[2])/3;
-				indexs[1+cnt]=(indexs[0]*sin(angles[0]))/sin(angles[cnt+1]);
-				cnt++;
-				*/
-				angle[1+cnt]=atan(sin_45/(indexs[0]*sin(angles[0])));
-				indexs[1+cnt]=sin_45/sin(angle[1+cnt]);
+			       do
+			       {
+					write(fd, measure_dis, 1);
+					measure(fd,&dis);
+					avg_dis=avg(&dis,3);
+					angles[cnt+1]=atan((sqrt(pow(height,2)+pow(avg_dis,2)))/(avg_dis*indexs[0]));
+					indexs[cnt+1]=sin_45/sin(angles[cnt+1]);
+			       }while(index[0]==INFINITY | index[1]==INFINITY | index[2]==INFINITY | indexs[cnt+1]==INFINITY);
 				cnt++;
 				break;
 			case 4://measure index of arcylic
 			       do
 			       {
 					write(fd, measure_dis, 1);
-					measure(fd, &angle,&index);	
+					measure_arc(fd, &angle,&index);	
 					//index of arcylic is average of three measured data			
-					//indexs[0]=index[0]+index[1]+index[2];
-					//indexs[0]/=3;
 					indexs[0]=avg(&index,3);
-					//angles[0]=angle[0]+angle[1]+angle[2];
-					//angles[0]/=3;
 					angles[0]=avg(&angle,3);
 				} while(indexs[0]==INFINITY);
 				break;

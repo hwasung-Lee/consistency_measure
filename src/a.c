@@ -1,6 +1,6 @@
 #include "a.h"
 
-int measure(int fd, double* angle, double* index)
+int measure_arc(int fd, double* angle, double* index)
 {
 	double data[3];
 	char buf[max_buf];
@@ -35,4 +35,15 @@ double avg(double* value, int n)
 	}
 	res/=n;
 	return res;
+}
+int measure(int fd, double*dis)
+{
+	char buf[max_buf];
+
+	for(int i=0;i<4;i++)
+	{
+		read(fd,&buf,sizeof(max_buf));
+		*(dis+i)=atof(buf);
+	}
+	return 0;
 }
