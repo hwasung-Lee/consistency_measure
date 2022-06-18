@@ -6,7 +6,7 @@ float measure_distance();
 
 void setup()
 {
-  Serial.begin(9600);
+  Serial.begin(115200);
   pinMode(laser_pin, OUTPUT);
   pinMode(sensor_TRIG, OUTPUT);
   pinMode(sensor_ECHO, INPUT);
